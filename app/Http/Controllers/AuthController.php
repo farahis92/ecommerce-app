@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -65,19 +66,20 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return $request->user()->only('name', 'email');
+        $response = $request->user()->only('name', 'email');
+        return response()->json($response);
     }
 
-    public function status()
+    public function status(): JsonResponse
     {
         return response()->json(["status" => true], 200);
     }
 
-    /**
-     * @param $request
-     * @param $type
-     * return token
-     */
+    public function otp(Request $request)
+    {
+        return response()->json('CODE OTP');
+    }
+
     private function generateToken($request, string $type)
     {
         return match ($type) {

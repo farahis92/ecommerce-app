@@ -3,7 +3,11 @@
 namespace App\Http;
 
 
+use App\Http\Middleware\EnsurePhoneIsUnverified;
+use App\Http\Middleware\EnsurePhoneIsVerified;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 class Kernel extends HttpKernel
 {
@@ -36,14 +40,15 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            SubstituteBindings::class,
         ],
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            SubstituteBindings::class,
         ],
+
     ];
 
     /**
@@ -63,7 +68,8 @@ class Kernel extends HttpKernel
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified_email' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'verified_phone' => \App\Http\Middleware\EnsurePhoneIsVerified::class,
+        'verified_email' => EnsureEmailIsVerified::class,
+        'verified_phone' => EnsurePhoneIsVerified::class,
+        'unverified_phone' => EnsurePhoneIsUnverified::class,
     ];
 }

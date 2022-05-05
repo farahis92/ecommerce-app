@@ -2,15 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
-use App\Services\MustVerifyPhone;
 use Closure;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\URL;
 
-class EnsurePhoneIsVerified
+class EnsurePhoneIsUnverified
 {
     /**
      * Handle an incoming request.
@@ -21,11 +16,10 @@ class EnsurePhoneIsVerified
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->user()->isPhoneUnverified()) {
+        if($request->user()->isPhoneVerified()) {
             return response()->json([
-                'message' => 'Your phone number is not verified',
-                'verified_phone' => false,
-                'test' => $request->user()->phone_verfied_at
+                'message' => 'Your phone number already verified',
+                'verified_phone' => false
             ], 403);
         }
 

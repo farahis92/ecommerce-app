@@ -48,12 +48,12 @@ class User extends Authenticatable
 
     public function isPhoneVerified()
     {
-        return $this->phone_verified_at;
+        return $this->phone_verified_at != null;
     }
 
-    public function isEmailVerified()
+    public function isPhoneUnverified()
     {
-        return $this->email_verified_at;
+        return $this->phone_verified_at == null;
     }
 
 }
