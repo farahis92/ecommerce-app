@@ -2,12 +2,6 @@
 
 namespace App\Services;
 
-use MarcinOrlowski\ResponseBuilder\Exceptions\ArrayWithMixedKeysException;
-use MarcinOrlowski\ResponseBuilder\Exceptions\ConfigurationNotFoundException;
-use MarcinOrlowski\ResponseBuilder\Exceptions\IncompatibleTypeException;
-use MarcinOrlowski\ResponseBuilder\Exceptions\InvalidTypeException;
-use MarcinOrlowski\ResponseBuilder\Exceptions\MissingConfigurationKeyException;
-use MarcinOrlowski\ResponseBuilder\Exceptions\NotIntegerException;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,6 +18,9 @@ class ApiResponse
     public string $defaultErrorMessage = "Error";
 
     /**
+     * Default Success Response, Can Custom Data or ApiCode and Message
+     * Default Api Code is 200
+     *
      * @param mixed|null $data
      * @param null $message
      * @param null $apiCode
@@ -42,15 +39,10 @@ class ApiResponse
     }
 
     /**
+     * Response ok 200
      * @param $data
      * @param $message
      * @return Response
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ArrayWithMixedKeysException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ConfigurationNotFoundException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\IncompatibleTypeException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\InvalidTypeException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\MissingConfigurationKeyException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\NotIntegerException
      */
     public function respondOk($data = null, $message = null): Response
     {
@@ -62,15 +54,11 @@ class ApiResponse
     }
 
     /**
+     * Response Created 201.
      * @param $data
      * @param $message
      * @return Response
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ArrayWithMixedKeysException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ConfigurationNotFoundException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\IncompatibleTypeException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\InvalidTypeException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\MissingConfigurationKeyException
-     * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\NotIntegerException
+     *
      */
     public function respondCreated($data = null, $message = null): Response
     {
@@ -82,6 +70,7 @@ class ApiResponse
     }
 
     /**
+     * Response no Content 204
      * @return Response
      */
     public function respondNoContent(): Response
@@ -92,7 +81,8 @@ class ApiResponse
     }
 
     /**
-     * Response Error Message & ApiCode, HTTP_BAD_REQUEST 400 as Default
+     * Response Error Message & ApiCode
+     * HTTP_BAD_REQUEST 400 as Default
      *
      * @param string|null $message
      * @param int|null $apiCode = 400
