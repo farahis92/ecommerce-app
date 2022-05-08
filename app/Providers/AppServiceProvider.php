@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\ApiResponse;
+use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('ApiResponse', function() {
+            return new ApiResponse();
+        });
+        if ($this->app->environment('local')) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**
@@ -21,8 +29,10 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        //
+        config(['app.locale' => 'en']);
+        Carbon::setLocale('en');
+        date_default_timezone_set('Asia/Jakarta');
     }
 }

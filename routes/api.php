@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
+use App\Http\Responses\Respond;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,8 +13,14 @@ Route::controller(AuthController::class)->middleware('guest:sanctum')->group(fun
     Route::post('/register', 'register');
 });
 
-Route::controller(AuthController::class)->middleware(['auth:sanctum','verified_phone'])->group(function () {
-    Route::post('/me', 'me');
-    Route::post('/status', 'status');
-    Route::post('/otp', 'otp')->withoutMiddleware('verified_phone')->middleware('unverified_phone');
-});
+Route::controller(AuthController::class)
+    ->middleware(['auth:sanctum'])
+    ->group(function () {
+        Route::post('/me', 'me');
+        Route::post('/status', 'status');
+        Route::post('/otp/phone', 'otpPhone')->middleware('unverified_phone');
+        Route::post('/otp/email', 'otpEmail')->middleware('unverified_phone');
+    });
+
+
+Route::get('/test', [AuthController::class, 'test']);

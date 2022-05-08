@@ -1,55 +1,47 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Models\User;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\OtpPhoneRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Models\{User, Otp};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\RateLimiter;
+use Symfony\Component\HttpFoundation\Response;
+use Respond;
 
 class AuthController extends Controller
 {
     private string $loginToken = "login";
     private string $registerToken = 'register';
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required|regex:/(62)[0-9]{9}/',
-            'password' => 'required|string|min:6|max:6'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => 'Please Check Input Credential'], 404);
-        }
-
         if (!Auth::attempt($request->only('phone', 'password'))) {
-            return response()->json(['message' => 'Phone or Password is Wrong'], 404);
+            return response()->json(['message' => 'Phone or Password is Wrong'], 422);
         }
-
-        return response()->json([
+        $user = $request->user();
+        $response = [
             'token' => $this->generateToken($request, $this->loginToken),
-            'name' => $request->user()->name,
-            'email' => $request->user()->email,
-        ]);
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'isVerified' => $user->isPhoneVerified(),
+        ];
+
+        return Respond::respondOk($response, 'Login Successfully');
+
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'phone' => 'required|regex:/(62)[0-9]{9}/|unique:users|max:20',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|max:6'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 404);
-        }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -60,24 +52,48 @@ class AuthController extends Controller
         return response()->json([
             'name' => $user->name,
             'email' => $user->email,
-            'access_token' => $this->generateToken($user,$this->registerToken),
+            'access_token' => $this->generateToken($user, $this->registerToken),
         ]);
     }
 
-    public function me(Request $request)
+    public function me(Request $request): JsonResponse
     {
         $response = $request->user()->only('name', 'email');
         return response()->json($response);
     }
 
-    public function status(): JsonResponse
+    public function status(): Response
     {
         return response()->json(["status" => true], 200);
     }
 
-    public function otp(Request $request)
+    public function otpPhone(OtpPhoneRequest $request): JsonResponse
     {
-        return response()->json('CODE OTP');
+        $executed = RateLimiter::attempt(
+            'otp-phone:' . $request->device_id,
+            1,
+            function () use ($request) {
+                Otp::create([
+                    'device_id' => $request->device_id,
+                    'user_id' => $request->user()->id,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'type' => $request->type,
+                    'valid_until' => now()->addMinute(5),
+                    'token' => random_int(100000, 999999)
+                ]);
+            }
+        );
+
+        if ($executed) {
+            return response()->json('OTP Sent Successfully');
+        } else {
+            return response()->json('too many request, please wait 1 minutes', 422);
+        }
+    }
+
+    public function otpEmail()
+    {
     }
 
     private function generateToken($request, string $type)
@@ -87,5 +103,14 @@ class AuthController extends Controller
             $this->registerToken => $request->createToken('auth_token')->plainTextToken,
             default => null,
         };
+    }
+
+    public function test()
+    {
+        $data = User::findOrFail(112);
+//        return \response()->json($data);
+
+        $user = User::latest()->first()->only("name", "email", "phone");
+        return Respond::respondSuccess($user, 'berhasil', 200);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\MustVerifyPhone;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'phone_verfied_at',
+        'email_verified_at',
     ];
 
     /**
@@ -43,7 +45,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'phone_verfied_at' => 'datetime'
+        'phone_verified_at' => 'datetime',
     ];
 
     public function isPhoneVerified()
@@ -55,5 +57,7 @@ class User extends Authenticatable
     {
         return $this->phone_verified_at == null;
     }
+
+
 
 }
