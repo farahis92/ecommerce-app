@@ -71,7 +71,7 @@ class AuthController extends Controller
     {
         $executed = RateLimiter::attempt(
             'otp-phone:' . $request->device_id,
-            1,
+            2,
             function () use ($request) {
                 Otp::create([
                     'device_id' => $request->device_id,
@@ -107,7 +107,8 @@ class AuthController extends Controller
 
     public function test()
     {
-        $data = User::findOrFail(112);
+//        throw new ModelNotFoundException('gak ketemu', 404);
+        $data = User::findOrFail(1211);
 //        return \response()->json($data);
 
         $user = User::latest()->first()->only("name", "email", "phone");

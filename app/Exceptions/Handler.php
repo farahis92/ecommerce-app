@@ -4,11 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use MarcinOrlowski\ResponseBuilder\ExceptionHandlerHelper;
-
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -46,21 +43,18 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+//                if ($e->getPrevious() instanceof ModelNotFoundException) {
+//                    throw new RouteNotFound($e->getMessage() . $request);
+//                }
+            }
         });
+//        $this->renderable(function (MethodNotAllowedHttpException $e, $request) {
+//            throw new RouteNotFound('method not allowed');
+//        });
     }
 
-    public function render($request, Throwable $e)
-    {
-        if($e instanceof HttpResponseException) {
-            return \Respond::respondError('Route Not Found',404);
-        }
-
-//        return parent::render($request, $e);
-
-//        return ExceptionHandlerHelper::render($request, $e);
-    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -103,7 +104,7 @@ class ApiResponse
      *
      * @return Response
      */
-    public function respondNotFound($message = null): Response
+    public function respondNotFound($message = null)
     {
         return RB::asError(RESPONSE::HTTP_NOT_FOUND)
             ->withHttpCode(RESPONSE::HTTP_NOT_FOUND)
@@ -138,6 +139,31 @@ class ApiResponse
     {
         return RB::asError(RESPONSE::HTTP_FORBIDDEN)
             ->withHttpCode(RESPONSE::HTTP_FORBIDDEN)
+            ->withMessage($message ?? $this->defaultErrorMessage)
+            ->build();
+    }
+
+    /**
+     * Response HTTP UNPROCESSABLE ENTITY 422
+     *
+     * @param string|null $message
+     *
+     * @return Response
+     */
+    public function respondValidationError(string $message = null, mixed $errors = null): Response
+    {
+        return response()->json([
+            "success" => false,
+            "code" => 422,
+            "locale" => \App::getLocale(),
+            "message" => $message ?? $this->defaultErrorMessage,
+            "data" => null,
+            "errors" => $errors,
+        ], 422);
+
+        return RB::asError(RESPONSE::HTTP_UNPROCESSABLE_ENTITY)
+            ->withData($data, "errors")
+            ->withHttpCode(RESPONSE::HTTP_UNPROCESSABLE_ENTITY)
             ->withMessage($message ?? $this->defaultErrorMessage)
             ->build();
     }

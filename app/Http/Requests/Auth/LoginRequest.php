@@ -34,10 +34,11 @@ class LoginRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-          throw new HttpResponseException(response()->json([
-            'message' => 'please check input form',
-            'errors' => $validator->errors()
-        ], 422));
+        $response = \Respond::respondValidationError(
+            'please check input',
+            $validator->errors()->toArray()
+        );
+        throw new HttpResponseException($response);
     }
 
 }

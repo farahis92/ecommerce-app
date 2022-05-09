@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Validation\ValidationException;
 use MarcinOrlowski\ResponseBuilder\Converters\ArrayableConverter;
 use MarcinOrlowski\ResponseBuilder\Converters\JsonSerializableConverter;
 use MarcinOrlowski\ResponseBuilder\Converters\ToArrayConverter;
 use MarcinOrlowski\ResponseBuilder\ExceptionHandlers\HttpExceptionHandler;
-use MarcinOrlowski\ResponseBuilder\ExceptionHandlers\ValidationExceptionHandler;
 
 
 //declare(strict_types=1)

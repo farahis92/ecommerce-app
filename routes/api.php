@@ -24,3 +24,5 @@ Route::controller(AuthController::class)
 
 
 Route::get('/test', [AuthController::class, 'test']);
+
+

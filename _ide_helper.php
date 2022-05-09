@@ -16379,7 +16379,8 @@
      */ 
         class ApiResponseFacade {
                     /**
-         * 
+         * Default Success Response, Can Custom Data or ApiCode and Message
+         * Default Api Code is 200
          *
          * @param mixed|null $data
          * @param null $message
@@ -16393,17 +16394,11 @@
                         return $instance->respondSuccess($data, $message, $apiCode);
         }
                     /**
-         * 
+         * Response ok 200
          *
          * @param $data
          * @param $message
          * @return \Response 
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ArrayWithMixedKeysException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ConfigurationNotFoundException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\IncompatibleTypeException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\InvalidTypeException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\MissingConfigurationKeyException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\NotIntegerException
          * @static 
          */ 
         public static function respondOk($data = null, $message = null)
@@ -16412,17 +16407,11 @@
                         return $instance->respondOk($data, $message);
         }
                     /**
-         * 
+         * Response Created 201.
          *
          * @param $data
          * @param $message
          * @return \Response 
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ArrayWithMixedKeysException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\ConfigurationNotFoundException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\IncompatibleTypeException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\InvalidTypeException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\MissingConfigurationKeyException
-         * @throws \MarcinOrlowski\ResponseBuilder\Exceptions\NotIntegerException
          * @static 
          */ 
         public static function respondCreated($data = null, $message = null)
@@ -16431,7 +16420,7 @@
                         return $instance->respondCreated($data, $message);
         }
                     /**
-         * 
+         * Response no Content 204
          *
          * @return \Response 
          * @static 
@@ -16442,7 +16431,8 @@
                         return $instance->respondNoContent();
         }
                     /**
-         * Response Error Message & ApiCode, HTTP_BAD_REQUEST 400 as Default
+         * Response Error Message & ApiCode
+         * HTTP_BAD_REQUEST 400 as Default
          *
          * @param string|null $message
          * @param int|null $apiCode = 400
@@ -16489,6 +16479,18 @@
         {
                         /** @var \App\Services\ApiResponse $instance */
                         return $instance->respondForbidden($message);
+        }
+                    /**
+         * Response HTTP UNPROCESSABLE ENTITY 422
+         *
+         * @param string|null $message
+         * @return \Response 
+         * @static 
+         */ 
+        public static function respondValidationError($message = null, $data = null)
+        {
+                        /** @var \App\Services\ApiResponse $instance */
+                        return $instance->respondValidationError($message, $data);
         }
          
     }
